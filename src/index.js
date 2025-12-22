@@ -1,5 +1,11 @@
 import dotenv from "dotenv"
-dotenv.config();
+dotenv.config({
+    path: './.env'
+});
+console.log("Env vars loaded:", {
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? "SET" : "NOT SET",
+    PORT: process.env.PORT
+});
 import connectDB from "./db/index.js"
 import { app } from "./app.js";
 

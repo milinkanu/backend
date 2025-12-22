@@ -51,12 +51,16 @@ const userSchema = new Schema(
     }
 )
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", function (next) {
     if(!this.isModified("password")){
-        return next();
+        next();
+        return;
     }
-    this.password = await bcrypt.hash(this.password, 10)
-    next()
+    bcrypt.hash(this.password, 10, (err, hash) => {
+        if (err) return next(err);
+        this.password = hash;
+        next();
+    });
 }) // before save agr password change hai toh password ko hash karega
 userSchema.methods.isPasswordCorrect = async function (password) { // password jo user ne enter kiya hai or hashedd passs ko validate karega
     return await bcrypt.compare(password, this.password)
