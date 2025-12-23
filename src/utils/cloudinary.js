@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs"
 
-const uploadOnCloudiary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath) => {
     try {
         if (!localFilePath) return null
         // Configure cloudinary if not already configured
@@ -27,4 +27,4 @@ const uploadOnCloudiary = async (localFilePath) => {
     }
 }
 
-export {uploadOnCloudiary}
+export {uploadOnCloudinary}

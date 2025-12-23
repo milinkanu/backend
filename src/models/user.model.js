@@ -40,7 +40,7 @@ const userSchema = new Schema(
         ],
         password: {
             type: String,
-            required: [true, 'Passowrd is required']
+            required: [true, 'Password is required']
         },
         refreshToken: {
             type: String
@@ -51,23 +51,17 @@ const userSchema = new Schema(
     }
 )
 
-userSchema.pre("save", function (next) {
-    if(!this.isModified("password")){
-        next();
-        return;
-    }
-    bcrypt.hash(this.password, 10, (err, hash) => {
-        if (err) return next(err);
-        this.password = hash;
-        next();
-    });
+userSchema.pre("save", async function() {
+    if(!this.isModified("password")) return;
+
+    this.password = await bcrypt.hash(this.password, 10);
 }) // before save agr password change hai toh password ko hash karega
 userSchema.methods.isPasswordCorrect = async function (password) { // password jo user ne enter kiya hai or hashedd passs ko validate karega
     return await bcrypt.compare(password, this.password)
 }
 
-userSchema.methods.generateAcessToken = function(){
-    jwt.sign(
+userSchema.methods.generateAccessToken = function(){
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -81,13 +75,13 @@ userSchema.methods.generateAcessToken = function(){
     )
 }
 userSchema.methods.generateRefreshToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
         },
-        process.env.REFERESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: process.env.REFERESH_TOKEN_EXPIRY
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
 }
